@@ -1,0 +1,238 @@
+c:\Users\Cristina Clata\.gemini\antigravity\scratch\ritual-pokemon-game\index.html
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>The Ritual PokeMint</title>
+  <meta name="description" content="Play the Ritual Finder game, buy Pokéballs with tokens, and mint holographic cards as NFTs.">
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <!-- Onboarding Gate Overlay -->
+  <div id="gate-overlay" class="gate-overlay">
+    <div class="gate-card">
+      <div class="gate-header">
+        <span class="gate-logo">🪐</span>
+        <h2>The Ritual PokeMint</h2>
+        <p>Ritual Chain System Protocol</p>
+      </div>
+      
+      <div class="gate-instructions">
+        <h3>🎮 Access Instructions</h3>
+        <ul>
+          <li><strong>Locate:</strong> Find glowing Ritual Knots in the radar scanner area.</li>
+          <li><strong>Harvest:</strong> Click/tap Ritual Knots to mine raw <strong>$RITUAL</strong> tokens.</li>
+          <li><strong>Buy:</strong> Visit the Pokéball Shop to purchase Pokéballs (Standard/Ultra).</li>
+          <li><strong>Mint:</strong> Reveal rare cards (holographic stats) and mint them as NFTs.</li>
+        </ul>
+      </div>
+      <div class="gate-auth-section">
+        <!-- Twitter Auth Step -->
+        <div class="auth-step" id="step-twitter">
+          <div class="step-num">1</div>
+          <div class="step-details">
+            <h4>Link X / Twitter</h4>
+            <p>Establish identity signature</p>
+            <div class="input-group" id="twitter-input-group" style="display: none; margin-top: 10px;">
+              <input type="text" id="twitter-username" placeholder="@yourhandle" class="gate-input">
+              <button id="btn-submit-twitter" class="btn-gate-action">Verify</button>
+            </div>
+            <button id="btn-connect-twitter" class="btn-connect-step">🐦 Connect Twitter</button>
+          </div>
+        </div>
+        <!-- Wallet Auth Step -->
+        <div class="auth-step" id="step-wallet">
+          <div class="step-num">2</div>
+          <div class="step-details">
+            <h4>MetaMask Wallet</h4>
+            <p>Connect to the Ritual Chain</p>
+            <button id="btn-connect-wallet-gate" class="btn-connect-step">🦊 Connect Wallet</button>
+          </div>
+        </div>
+      </div>
+      <button id="btn-enter-arena" class="btn-enter" disabled>LOCK PROTOCOLS & ENTER</button>
+    </div>
+  </div>
+  <!-- Header / Nav bar -->
+  <header>
+    <div class="logo-section">
+      <span class="logo-icon">🪐</span>
+      <div class="logo-text">
+        <h1>The Ritual PokeMint</h1>
+        <p>Ritual Chain System Network</p>
+      </div>
+    </div>
+    
+    <div class="status-bar">
+      <div class="stat-pill">
+        <span>$RITUAL:</span>
+        <strong id="balance-siggy">0.00</strong>
+      </div>
+      <div class="stat-pill">
+        <span>$RITUAL:</span>
+        <strong id="balance-ritual">3.00</strong>
+      </div>
+      <button id="btn-wallet" class="btn-connect">
+        <span>🔌 Connect Wallet</span>
+      </button>
+    </div>
+  </header>
+  <!-- Game Main View Grid -->
+  <main class="game-grid">
+    
+    <!-- Left Column: Camera + Inventory -->
+    <div class="main-column">
+      
+      <!-- Section 1: Siggy AR Finder Game -->
+      <section class="game-cabinet">
+        <header class="cabinet-header">
+          <h2 class="cabinet-title">📡 Ritual Finder Scanner</h2>
+          <span style="font-family: var(--font-mono); font-size: 11px; color: var(--accent);">Webcam Radar System</span>
+        </header>
+        
+        <div class="camera-view-container">
+          <!-- WebRTC video input -->
+          <video id="camera-video" autoplay playsinline muted></video>
+          
+          <!-- AR Grid & Scan overlay -->
+          <div class="scanner-overlay">
+            <div class="scanner-radar"></div>
+            <div class="scanner-sweep"></div>
+          </div>
+          
+          <!-- Falling / Floating target mascot -->
+          <div id="siggy-target" class="siggy-target" style="display: none; border-radius: 50%; overflow: hidden; width: 72px; height: 72px; border: 2px solid var(--primary); box-shadow: 0 0 16px var(--primary), 0 0 32px rgba(168, 85, 247, 0.3);">
+            <img src="assets/knot_logo.jpg" alt="Ritual Knot Logo Target" style="width: 100%; height: 100%; object-fit: cover;">
+          </div>
+          <!-- Fallback view when camera is disabled/not allowed -->
+          <div id="camera-fallback">
+            <span style="font-size: 40px;">📷</span>
+            <h3>Webcam Scanner Offline</h3>
+            <p style="font-size: 12px; max-width: 320px;">Grant camera access to search your environment for the Ritual Knot, or run the simulated scan below.</p>
+          </div>
+        </div>
+        <div class="camera-controls">
+          <button id="btn-start-camera" class="btn-game">🔌 Mount Webcam</button>
+          <button id="btn-mock-radar" class="btn-game active">🚀 Simulate Radar Spawner</button>
+        </div>
+      </section>
+      <!-- Section 2: Inventory -->
+      <section class="game-cabinet">
+        <header class="cabinet-header">
+          <h2 class="cabinet-title">🎒 Card Album (NFTs)</h2>
+          <span id="album-count" style="font-family: var(--font-mono); font-size: 11px;">0 Cards Owned</span>
+        </header>
+        
+        <div id="inventory-container" class="inventory-grid">
+          <!-- Empty Inventory message -->
+          <div id="inventory-empty" style="grid-column: 1 / -1; text-align: center; padding: 40px; color: var(--text-muted);">
+            <p>Your card album is empty. Go find the Ritual Knot using the Ritual Finder to earn tokens, buy Pokéballs in the shop, and mint some NFT cards!</p>
+          </div>
+        </div>
+      </section>
+      
+    </div>
+    <!-- Right Column: Shop & Log -->
+    <div class="side-column">
+      
+      <!-- Section 3: Pokéball Shop -->
+      <section class="game-cabinet">
+        <header class="cabinet-header">
+          <h2 class="cabinet-title">🛒 Pokéball Shop</h2>
+        </header>
+        
+        <div class="ball-purchase-grid">
+          <!-- Standard Ball -->
+          <div class="shop-card">
+            <div class="ball-preview-container">
+              <div class="pokeball" id="shop-ball-standard"></div>
+            </div>
+            <h3 class="ball-title">Standard Pokéball</h3>
+            <div class="ball-price">30 RITUAL</div>
+            <button class="btn-buy" data-ball="standard">Buy & Open</button>
+          </div>
+          <!-- Ultra Ball -->
+          <div class="shop-card">
+            <div class="ball-preview-container">
+              <div class="pokeball ultra-ball" id="shop-ball-ultra"></div>
+            </div>
+            <h3 class="ball-title">Ultra Pokéball</h3>
+            <div class="ball-price">100 RITUAL</div>
+            <button class="btn-buy" data-ball="ultra">Buy & Open</button>
+          </div>
+        </div>
+      </section>
+      <!-- Section 4: Activity Log -->
+      <section class="game-cabinet">
+        <header class="cabinet-header">
+          <h2 class="cabinet-title">🧾 Smart Contract Log</h2>
+        </header>
+        <div style="background: rgba(0, 0, 0, 0.3); border-radius: 8px; border: 1px solid var(--border); padding: 12px; height: 260px; overflow-y: auto; font-family: var(--font-mono); font-size: 11px;" id="contracts-log">
+          <div style="color: var(--text-muted);">[SYSTEM] Connected to Ritual chain network...</div>
+          <div style="color: var(--text-muted);">[SYSTEM] Deploying RitualToken & RitualPokemonNFT...</div>
+          <div style="color: var(--success);">[DEPLOY] RitualToken: 0x532F...3948</div>
+          <div style="color: var(--success);">[DEPLOY] RitualPokemonNFT: 0xC069...AEF5</div>
+        </div>
+      </section>
+      
+    </div>
+  </main>
+  <!-- Gacha Reveal Animation Modal overlay -->
+  <div id="unboxing-overlay" class="unboxing-overlay">
+    <div class="unboxing-stage">
+      <!-- Flash blast effect -->
+      <div id="flash-effect" class="flash-effect"></div>
+      
+      <!-- Shaking unboxing ball -->
+      <div class="ball-preview-container" id="unboxing-ball-container">
+        <div class="pokeball" id="unboxing-ball" style="width:80px; height:80px;"></div>
+      </div>
+      
+      <!-- Hidden Card that turns face up -->
+      <div class="pokemon-card" id="revealed-card">
+        <div class="card-header">
+          <span class="card-name" id="card-name">Siggy Cat</span>
+          <span class="card-hp" id="card-hp">HP 90</span>
+        </div>
+        
+        <div class="card-img-frame">
+          <img id="card-image" src="assets/card_siggy_vmax.jpg" alt="Mascot Card Image">
+          <span class="card-type-tag" id="card-rarity">Legendary</span>
+        </div>
+        
+        <div class="card-info">
+          <div class="card-stat-row">
+            <span>Special Attack</span>
+            <span id="card-attack">Precompile Core</span>
+          </div>
+          <div class="card-stat-row">
+            <span>Power Level</span>
+            <span id="card-power">980</span>
+          </div>
+          <p class="card-description" id="card-desc">An autonomous on-chain cybernetic beast capable of FHE processing in under 350ms.</p>
+        </div>
+      </div>
+    </div>
+    <!-- Actions to claim/mint -->
+    <div class="unboxing-actions" id="unboxing-actions">
+      <button class="btn-game active" id="btn-mint-nft">💎 Mint NFT Card</button>
+      <button class="btn-game" id="btn-discard">Discard</button>
+    </div>
+    <!-- Actions after minting succeeds -->
+    <div class="mint-success-actions" id="mint-success-actions" style="display: none; gap: 12px; width: 100%; max-width: 320px; margin-top: 24px; flex-direction: column; align-items: center; z-index: 100;">
+      <div style="color: var(--success); font-weight: 800; font-size: 13px; font-family: var(--font-mono); margin-bottom: 8px; text-shadow: 0 0 10px rgba(16, 185, 129, 0.4); text-transform: uppercase; letter-spacing: 1px;">🎉 Minted Successfully!</div>
+      <div style="display: flex; gap: 12px; width: 100%;">
+        <button class="btn-game active" id="btn-share-minted" style="background: linear-gradient(135deg, #1d9bf0, #1a8cd8); border: none; flex-grow: 1.3;">🐦 Share on X</button>
+        <button class="btn-game" id="btn-close-unbox" style="flex-grow: 0.7;">Close</button>
+      </div>
+    </div>
+  </div>
+  <!-- Toast system -->
+  <div id="toast" class="toast" role="alert">
+    <span class="toast-icon">⚡</span>
+    <span id="toast-message">Mascot captured!</span>
+  </div>
+  <script src="app.js"></script>
+</body>
+</html>
